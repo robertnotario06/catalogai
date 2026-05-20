@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+        'Authorization': `Bearer ${process.env.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}`
       },
       body: JSON.stringify({
         model: 'dall-e-3',
