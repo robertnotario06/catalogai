@@ -783,22 +783,13 @@ const HERO_PROMPT = "white minimalist canvas low-top sneakers, professional e-co
 
 async function generateImage(prompt) {
   try {
-    const res = await fetch('https://api.openai.com/v1/images/generations', {
+    const res = await fetch('/api/generate-image', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer OPENAI_API_KEY'
-      },
-      body: JSON.stringify({
-        model: 'dall-e-3',
-        prompt: prompt,
-        n: 1,
-        size: '1024x1024',
-        quality: 'standard'
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
     });
     const data = await res.json();
-    if (data.data && data.data[0]) return data.data[0].url;
+    if (data.url) return data.url;
     return null;
   } catch(e) {
     return null;
