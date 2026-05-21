@@ -151,8 +151,9 @@ section { padding: 6rem 2rem; }
 }
 .ex-card:hover { transform: translateY(-3px); }
 .ex-card-img {
-  height: 140px; display: flex; align-items: center; justify-content: center;
+  height: 160px; display: flex; align-items: center; justify-content: center;
   font-size: 3.5rem; border-bottom: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden; position: relative;
 }
 .ex-card-body { padding: 1.1rem; }
 .ex-card-category { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.8px; color: rgba(255,255,255,0.35); margin-bottom: 0.4rem; }
@@ -802,12 +803,13 @@ function setImage(el, url) {
   el.style.background = '#111';
   el.style.flexDirection = '';
   el.style.gap = '';
-  el.style.justifyContent = 'center';
-  el.style.alignItems = 'center';
+  el.style.padding = '0';
+  el.style.overflow = 'hidden';
+  el.style.height = '160px';
   const img = document.createElement('img');
   img.src = url;
-  img.style.cssText = 'width:100%;height:160px;object-fit:cover;display:block;';
-  img.alt = 'AI generated product image';
+  img.style.cssText = 'width:100%;height:160px;object-fit:cover;object-position:center;display:block;';
+  img.alt = 'Product image';
   el.appendChild(img);
 }
 
@@ -835,7 +837,10 @@ async function loadVisibleImages() {
         if (url) {
           el.style.padding = '0';
           el.style.border = 'none';
-          el.innerHTML = '<img src="' + url + '" style="width:100%;height:120px;object-fit:cover;border-radius:8px;" alt="AI generated" />';
+          el.style.padding = '0';
+        el.style.overflow = 'hidden';
+        el.style.height = '120px';
+        el.innerHTML = '<img src="' + url + '" style="width:100%;height:120px;object-fit:cover;object-position:center;border-radius:8px;display:block;" alt="Product image" />';
         }
         continue;
       }
