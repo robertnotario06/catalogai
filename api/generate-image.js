@@ -11,37 +11,25 @@ module.exports = async function handler(req, res) {
     try { body = JSON.parse(body); } catch(e) {}
   }
 
-  const prompt = body && body.prompt;
-  if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
-
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'Missing OPENAI_API_KEY' });
-
-  // Truncate prompt to 1000 chars (DALL-E 2 limit)
-  const safePrompt = prompt.slice(0, 1000);
+  const query = body && body.prompt;
+  if (!query) return res.status(400).json({ error: 'Missing prompt' });
 
   try {
-    const response = await fetch('https://api.openai.com/v1/images/generations', {
-      method: 'POST',
+    const searchQuery = encodeURIComponent(query.split(',')[0].trim());
+    const url = `https://api.unsplash.com/photos/random?query=${searchQuery}&orientation=squarish&content_filter=high`;
+
+    const response = await fetch(url, {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'dall-e-2',
-        prompt: safePrompt,
-        n: 1,
-        size: '512x512'
-      })
+        'Authorization': `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`
+      }
     });
 
     const data = await response.json();
-    console.log('OpenAI response:', JSON.stringify(data));
-    
-    if (data.error) return res.status(500).json({ error: data.error.message, code: data.error.code });
-    if (!data.data || !data.data[0]) return res.status(500).json({ error: 'No image returned', raw: data });
-    
-    return res.status(200).json({ url: data.data[0].url });
+
+    if (data.errors) return res.status(500).json({ error: data.errors[0] });
+    if (!data.urls) return res.status(500).json({ error: 'No image found' });
+
+    return res.status(200).json({ url: data.urls.regular });
 
   } catch (error) {
     return res.status(500).json({ error: error.message });
